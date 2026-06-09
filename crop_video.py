@@ -16,6 +16,8 @@ fourcc = cv2.VideoWriter_fourcc(*'mp4v') # Codec for MP4
 left_out = cv2.VideoWriter("videos/" + Path(input_video).stem + "_left.mp4", fourcc, fps, (960, 540))
 right_out = cv2.VideoWriter("videos/" + Path(input_video).stem + "_right.mp4", fourcc, fps, (960, 540))
 
+frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+frame_id = 0
 
 while True:
     ret, frame = cap.read()
@@ -31,6 +33,11 @@ while True:
     # Write the cropped frame to the output file
     left_out.write(cropped_frame_l)
     right_out.write(cropped_frame_r)
+    
+    # Progress indicator
+    frame_id += 1
+    pct = frame_id / frame_count * 100
+    print(f"\rProgress: {pct:.1f}%", end="")
 
 # Release everything when done
 cap.release()
