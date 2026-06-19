@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
-CALIBRATION_IMAGE_PATH = "videos/stripes.png" 
+CALIBRATION_IMAGE_PATH = "../videos/stripes.png" 
 
 
 CALIBRATION_POINTS = [

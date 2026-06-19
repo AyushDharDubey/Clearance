@@ -4,7 +4,7 @@ import torch
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
-CALIBRATION_IMAGE_PATH = "videos/stripes.png" 
+CALIBRATION_IMAGE_PATH = "../videos/stripes.png" 
 
 
 CALIBRATION_POINTS = [
