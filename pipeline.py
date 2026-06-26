@@ -44,8 +44,11 @@ class VideoProcessor:
         """Converts raw DPT LeViT depth into absolute meters using rational function regression."""
         # a3 = -0.00000165, a2 = 0.00617685, a1 = -7.76795188, a0 = 3457.55560786
         # return (a3 * (median_depth ** 3)) + (a2 * (median_depth ** 2)) + (a1 * median_depth) + a0
-
+        
+        # un normalized version
         a, b, c = 162068.454209, -224.37777, 50.175
+        # normalized version
+        a, b, c = 64.507458, -0.115252, 35.173435
         return (a / (median_depth + b)) + c
 
     @staticmethod
@@ -157,6 +160,9 @@ class VideoProcessor:
             depth_map = torch.nn.functional.interpolate(
                 predicted_depth.unsqueeze(1), size=(h, w), mode="bicubic", align_corners=False
             ).squeeze().cpu().numpy()
+            # normalize from 0 to 1
+            d_min, d_max = depth_map.min(), depth_map.max()
+            depth_map = (depth_map - d_min) / (d_max - d_min)
 
         # Models Predictions Unified Pipeline
         er_res = self.erick_model.track(frame, conf=self.conf_threshold, verbose=False, persist=True, agnostic_nms=True)[0]
@@ -172,7 +178,7 @@ class VideoProcessor:
         csv_rows = []
         for det in filtered_dets:
             dist = det['distance']
-            if not (0 <= dist <= 500):
+            if not (0 <= dist <= 300):
                 continue
 
             random.seed(det['tracking_id'])
